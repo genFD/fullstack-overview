@@ -25,6 +25,9 @@ wss.on('connection', function connection(ws) {
   if (ws.readyState === ws.OPEN) {
     ws.send('welcome to websocket server')
   }
+  db.run(`INSERT INTO visitors (count, time)
+        VALUES (${numOfClients}, datetime('now'))
+`)
   ws.on('close', function close() {
     console.log('clients disconnected')
   })
@@ -35,3 +38,39 @@ wss.broadcast = function broadcast(data) {
     client.send(data)
   })
 }
+
+// database
+
+const sqlite = require('sqlite3')
+const { clear } = require('console')
+
+const db = new sqlite.Database(':memory:')
+
+db.serialize(() => {
+  db.run(`CREATE TABLE visitors (
+       count INTEGER,
+       time TEXT
+    )
+    `)
+})
+
+function getCount() {
+  db.each('SELECT * FROM visitors', (err, row) => {
+    console.log(row)
+  })
+}
+
+function shutdownDB() {
+  getCount()
+  console.log('Shutting down database')
+  db.close()
+}
+
+process.on('SIGINT', () => {
+  wss.clients.forEach((client) => {
+    client.close()
+  })
+  server.close(() => {
+    shutdownDB()
+  })
+})
