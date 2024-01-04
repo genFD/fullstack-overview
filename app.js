@@ -1,9 +1,10 @@
 const http = require('http')
+const sqlite = require('sqlite3')
 const PORT = 8000
 
-const server = http.createServer((req, res) =>{ 
-res.write("Hello from basic nodejs server")
-res.end()	
+const server = http.createServer((req, res) => {
+  res.write('Hello from basic nodejs server')
+  res.end()
 })
 
 server.listen(PORT)
