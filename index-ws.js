@@ -42,7 +42,6 @@ wss.broadcast = function broadcast(data) {
 // database
 
 const sqlite = require('sqlite3')
-const { clear } = require('console')
 
 const db = new sqlite.Database(':memory:')
 

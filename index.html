@@ -4,34 +4,117 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PostgreSQL Sample</title>
+    <style>
+      .container {
+        height: 95vh;
+        width: 95vw;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .button-30 {
+        align-items: center;
+        appearance: none;
+        background-color: #fcfcfd;
+        border-radius: 4px;
+        border-width: 0;
+        box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px,
+          rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #d6d6e7 0 -3px 0 inset;
+        box-sizing: border-box;
+        color: #36395a;
+        cursor: pointer;
+        display: inline-flex;
+        font-family: 'JetBrains Mono', monospace;
+        height: 48px;
+        justify-content: center;
+        line-height: 1;
+        list-style: none;
+        overflow: hidden;
+        padding-left: 16px;
+        padding-right: 16px;
+        position: relative;
+        text-align: left;
+        text-decoration: none;
+        transition: box-shadow 0.15s, transform 0.15s;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+        white-space: nowrap;
+        will-change: box-shadow, transform;
+        font-size: 18px;
+      }
+
+      .button-30:focus {
+        box-shadow: #d6d6e7 0 0 0 1.5px inset, rgba(45, 35, 66, 0.4) 0 2px 4px,
+          rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #d6d6e7 0 -3px 0 inset;
+      }
+
+      .button-30:hover {
+        box-shadow: rgba(45, 35, 66, 0.4) 0 4px 8px,
+          rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #d6d6e7 0 -3px 0 inset;
+        transform: translateY(-2px);
+      }
+
+      .button-30:active {
+        box-shadow: #d6d6e7 0 3px 7px inset;
+        transform: translateY(2px);
+      }
+      .box {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+      ul {
+        list-style-type: none;
+      }
+      li {
+        padding: 5px 10px;
+        background-color: #d6d6e7;
+        color: black;
+        border: 1px solid #dddddd;
+      }
+    </style>
   </head>
-  <body>
-    <input type="text" placeholder="Board ID Number" id="search" />
-    <button id="btn">Search</button>
-    <pre>
-        <code id="code"></code>
-    </pre>
+  <body style="background: black">
+    <div class="container">
+      <div class="box">
+        <button class="button-30" role="button" id="btn">get countries</button>
+
+        <ul id="myList"></ul>
+      </div>
+    </div>
 
     <script>
       const btn = document.getElementById('btn')
-      const code = document.getElementById('code')
-      const search = document.getElementById('search')
+      const list = document.getElementById('myList')
+      async function httpGetCountries() {
+        try {
+          const response = await fetch('http://localhost:8000/getCountries')
+          const countries = await response.json()
+          console.log(countries)
+          for (i = 0; i < countries.length; ++i) {
+            let li = document.createElement('li')
 
-      btn.addEventListener('click', async () => {
-        code.innerText = 'loading'
+            li.innerText = countries[i].name
 
-        const res = await fetch(
-          '/get?search=' + encodeURIComponent(search.value)
-        )
-        const json = await res.json()
+            list.appendChild(li)
+          }
+        } catch (error) {
+          console.log(error)
+          return {
+            ok: false,
+          }
+        }
+      }
 
-        code.innerText = '\n' + JSON.stringify(json, null, 4)
-      })
+      btn.addEventListener('click', httpGetCountries)
     </script>
   </body>
 </html>
 
 <!-- <!DOCTYPE html>
+  '\n' + , null, 4
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -42,11 +125,23 @@
     Welcome to WebSocket
   </body>
   <script>
+      code.innerText = '\n' + JSON.stringify(data, null, 4)
+        desc.innerText = '\n' + JSON.stringify(data, null, 4)
     let ws
     const proto = window.location.protocol === 'https' ? 'wss' : 'ws'
     ws = new WebSocket(`${proto}://${window.location.host}`)
     ws.onmessage = (event) => {
       console.log(event.data)
     }
+     btn.addEventListener('click', async () => {
+        code.innerText = 'loading'
+
+        const res = await fetch(
+          '/get?search=' + encodeURIComponent(search.value)
+        )
+        const json = await res.json()
+
+        code.innerText = '\n' + JSON.stringify(json, null, 4)
+      })
   </script>
 </html> -->
